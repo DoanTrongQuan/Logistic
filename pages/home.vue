@@ -6,7 +6,7 @@
 				</div>
 				<div class = "box-tracking-input flex justify-between items-center py-2 px-4 ">
 					<p>1.</p>
-					<input class = "w-11/12 input p-1 bg-[#F5F5FA]"></input>
+					<input class = "w-11/12 input p-1 bg-[#F5F5FA] focus:border-none focus:outline-none"></input>
 					<svg class = "justify-end" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M4.16748 4.16663L15.8334 15.8325" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
 						<path d="M4.16676 15.8325L15.8326 4.16663" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
@@ -14,7 +14,7 @@
 				</div>
 				<div class = "mt-2 flex justify-between py-2 px-4">
 					2.
-					<input class = "w-11/12 "></input>
+					<input class = "w-11/12 focus:border-none focus:outline-none"></input>
 					<svg class = "justify-end" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M4.16748 4.16663L15.8334 15.8325" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
 						<path d="M4.16676 15.8325L15.8326 4.16663" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
@@ -37,30 +37,24 @@
 						<rect x="0.5" y="0.5" width="47" height="47" rx="11.5" fill="white"/>
 						<rect x="0.5" y="0.5" width="47" height="47" rx="11.5" stroke="#D3D8E5"/>
 						<path d="M14 18H34M22 23V28M26 23V28M16 18H32L30.42 32.22C30.3658 32.7094 30.1331 33.1616 29.7663 33.49C29.3994 33.8184 28.9244 34 28.432 34H19.568C19.0756 34 18.6006 33.8184 18.2337 33.49C17.8669 33.1616 17.6342 32.7094 17.58 32.22L16 18ZM19.345 15.147C19.5068 14.804 19.7627 14.514 20.083 14.3109C20.4033 14.1078 20.7747 14 21.154 14H26.846C27.2254 13.9998 27.5971 14.1075 27.9176 14.3106C28.2381 14.5137 28.4942 14.8038 28.656 15.147L30 18H18L19.345 15.147V15.147Z" stroke="#E8173C" stroke-linecap="round" stroke-linejoin="round"/>
-					</svg>
+					</svg>	
 					</div>
 					
 				</div>
 		</div>
 		<div class = "lg:col-span-3 col-span-4  track-content py-2 px-3 ">
-				<UTabs :items="items" class="w-full list-tab bg-white relative" :ui="{ list: { background: '',overflow:'overflow-x-auto', tab: { base : 'justify-start',padding: 'px-1',
-				background:''} } }" >
-					<template #default="{ item, index, selected }">
-							<div class="items-center  gap-2  truncate ">
-								<span class="truncate ">{{ item.label }}</span>
-	
-							</div>
-					</template>
-					<template #label="{ item }">
-							<div class="items-center    gap-2  truncate ">
-								<span class="truncate ">{{ item.label }}</span>
-	
-							</div>
-					</template>	
-					<template #item="{ item }">
-
-						<div>
-							<div class = "grid grid-cols-7 justify-between">
+			<div class="w-full">
+        <ul class="flex mb-0 list-none flex-wrap pt-1 pb-4 flex-row">
+            <li v-for = "(tab,i) in tabs" :key = "i" class="-mb-px mt-2 mr-2 xl:mr-0 last:mr-0 flex-auto text-center">
+            <a class="text-sm font-bold text-[#17171E] px-5 py-3 shadow-lg rounded block leading-normal" 
+            @click="toggleTabs(tab.key)" :class="{'font-bold bg-gradient-to-b from-[rgba(55,93,226,0)] to-[rgba(55,93,226,0.08)]': openTab === tab.key, 'font-normal bg-white': openTab != tab.key}">
+                {{ tab.label }}
+            </a>
+            </li>
+        </ul>
+        <div class="relative flex flex-col min-w-0 break-words w-full mb-6  rounded">
+            <div v-show = "openTab === tabs[0].key">
+							<div class = "grid grid-cols-7 py-3 justify-between">
 								<div class="col-span-2 flex">
 									<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
 										<rect width="56" height="56" rx="13" fill="#E8173C"/>
@@ -216,9 +210,9 @@
 									</div>
 								</div>
 							</div>
-						</div>
-					</template>
-				</UTabs>
+            </div>
+        </div>
+    </div>
 	
 		</div>
 	</div>
@@ -227,52 +221,52 @@
 	<script setup>
 	
 	
-	const items = [{
-		key: 'account',
+	const tabs = ref([
+    {
+		key: 'all',
 		label: 'All (10)',
 	},
 	{
-		key: 'password',
+		key: 'not found',
 		label: 'Not found (0)',
 	},
 	{
-		key: 'dsf',
+		key: 'info received',
 		label: 'Info Received (0)',
 	},
 	{
-		key: 'fsdf',
+		key: 'in transit',
 		label: 'In-Transit (0)',
 	},
 	{
-		key: 'fsd',
+		key: 'pick up',
 		label: 'Pick Up (0)',
 	},
 	{
-		key: 'fsd',
+		key: 'out of delivery',
 		label: 'Out for delivery (0)',
 	},
 	{
-		key: 'sfsd',
+		key: 'undelivered',
 		label: 'Undelivered (0)',
 	},
 	{
-		key: 'fsd',
+		key: 'delivered',
 		label: 'Delivered (0)',
 
 	},
 	{
-		key: 'fsd',
+		key: 'alert',
 		label: 'Alert (0)',
 
 	}
-	]
-	
-	const accountForm = reactive({ name: 'Benjamin', username: 'benjamincanac' })
-	const passwordForm = reactive({ currentPassword: '', newPassword: '' })
-	
-	function onSubmit (form) {
-		console.log('Submitted form:', form)
-	}
+	])
+
+const openTab = ref(tabs.value[0].key);
+
+  const toggleTabs = (tabNumber) => {
+    openTab.value = tabNumber;
+  };
 	</script>
 	
 	<style scoped>
@@ -322,30 +316,13 @@
 		background: #FF7614;
 		border-radius: 12px;
 	}
-	
-	
-	
+
 	
 	.track-content {
-		box-sizing: border-box;
-	
-		background: #FFFFFF;
-		/* neu/4 */
-		border: 0.5px solid #E5E5E5;
-		border-radius: 32px;
-	}
-	
-	.track-content {
-		box-sizing: border-box;
-		/* neu/1 */
-		background: #FFFFFF;
-		/* neu/4 */
 		border: 0.5px solid #E5E5E5;
 		border-radius: 29px;
 		overflow: auto;
 	}
-	
-	
 	
 	.progress {
 		position: relative;
