@@ -5,19 +5,23 @@
     <div class = "w-full bg-white max-h-[300px] border pb-4 pt-2 border-[#EAECF3] rounded-[20px] mt-3 ">
       <div class = "h-48 overflow-y-auto px-3">
         <div v-for="(input, index) in inputs" class = "flex items-center">
-          <span class = "color-[#757575]">{{ index }}. </span>
+          <span style = "color: #747592;">{{ index }}. </span>
           <input 
+            :placeholder="
+            isShowPlaceholder ? 'Enter up to 40 numbers, one per line ': ''"
             class = "w-full p-1 border-none focus:border-none focus:outline-none"
             :ref="el => inputRefs[index] = el"
             :value="input.value"
-            @input="event => input.value = event.target.value"
+            @input="event => { input.value = event.target.value; console.log('Input updated:', inputs[index].value,inputs); }"
             @keydown="event => handleKeydown(event, index)"
           />
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg @click = "closeInput(index)" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M4.16748 4.16663L15.8334 15.8325" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4.16676 15.8325L15.8326 4.16663" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
        </div>
+       <p v-if = "isShowPlaceholder" class = "text-[#b3b8c2]">Support airline cargo tracking, format: 123 - 12345678.</p>
+
       <div class="input-container flex flex-col">
 
       </div>  
@@ -25,7 +29,7 @@
 
       <div class = "flex justify-end px-12">
         <button class="flex flex-row items-center justify-center text-white
-         p-[12px_14px] gap-3.5 w-[144px] max-h-[48px] bg-[#FF7614] rounded-[12px] z-10 order-3" onclick="trackNumbers()">
+         p-[12px_14px] gap-3.5 w-[144px] max-h-[48px] bg-[#FF7614] rounded-[12px] z-10 order-3" @click="trackNumbers">
           Tracks
           <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3.67001 7.43994L12.5 12.5499L21.27 7.46991" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
@@ -47,13 +51,18 @@
 
 <script setup>
 
-
 definePageMeta({
   layout:'custom-track', 
 })
 const inputs = ref([{ value: '' }]);
 const inputRefs = ref([]);
+const code = ref('')
+const isShowPlaceholder = computed(()=>{
+if(inputs.value.length >1) return false
+if(inputs.value[0].value) return false
+return true
 
+})
 const handleKeydown = (event, index) => {
   if (event.key === 'Enter') {
     event.preventDefault();
@@ -72,6 +81,30 @@ const handleKeydown = (event, index) => {
     }
   }
 };
+
+const data = {
+ numbers: ["LB0007212015030890", "TSF1122334455667777"]
+}
+
+const closeInput = (index) => {
+  // Chỉ cho phép xóa nếu có nhiều hơn 1 ô input
+  if (inputs.value.length > 1) {
+    inputs.value.splice(index, 1); // Xóa phần tử tại vị trí index
+
+    // Sau khi xóa, focus lại vào một input hợp lý
+    nextTick(() => {
+      const newIndex = index < inputs.value.length ? index : inputs.value.length - 1;
+      inputRefs.value[newIndex].focus();
+    });
+  }
+};
+const trackNumbers = () => {
+  const data = {
+
+ numbers: inputs.value.map(input => input.value)
+}
+}
+
 </script>
 
 <style scoped>
