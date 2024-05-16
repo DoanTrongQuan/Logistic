@@ -5,22 +5,21 @@
     <div class = "w-full bg-white max-h-[300px] border pb-4 pt-2 border-[#EAECF3] rounded-[20px] mt-3 ">
       <div class = "h-48 overflow-y-auto px-3">
         <div v-for="(input, index) in inputs" class = "flex items-center">
-          <span style = "color: #747592;">{{ index }}. </span>
+          <span :style="{ color: isShowPlaceholder ? '#b3b8c2' : '#747592' }">{{ index + 1 }}. </span>
           <input 
             :placeholder="
             isShowPlaceholder ? 'Enter up to 40 numbers, one per line ': ''"
             class = "w-full p-1 border-none focus:border-none focus:outline-none"
             :ref="el => inputRefs[index] = el"
             :value="input.value"
-            @input="event => { input.value = event.target.value; console.log('Input updated:', inputs[index].value,inputs); }"
-            @keydown="event => handleKeydown(event, index)"
+            @input="event => { input.value = event.target.value.toUpperCase(); console.log('Input updated:', inputs[index].value,inputs); }"
+            @keydown="event => handleKeydown(event, index,inputs, inputRefs)"
           />
-          <svg @click = "closeInput(index)" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4.16748 4.16663L15.8334 15.8325" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M4.16676 15.8325L15.8326 4.16663" stroke="#747592" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+          <img src = "/img/close.svg" @click = "removeInput(index,inputs,inputRefs)">
        </div>
-       <p v-if = "isShowPlaceholder" class = "text-[#b3b8c2]">Support airline cargo tracking, format: 123 - 12345678.</p>
+       <p v-if = "isShowPlaceholder" class = "text-[#b3b8c2] pl-4">Support airline cargo tracking, format: 123 - 12345678.
+        
+       </p>
 
       <div class="input-container flex flex-col">
 
@@ -28,16 +27,10 @@
       </div>
 
       <div class = "flex justify-end px-12">
-        <button class="flex flex-row items-center justify-center text-white
-         p-[12px_14px] gap-3.5 w-[144px] max-h-[48px] bg-[#FF7614] rounded-[12px] z-10 order-3" @click="trackNumbers">
+        <button @click="trackNumbers(inputs)" class="flex flex-row items-center justify-center text-white
+         p-[12px_14px] gap-3.5 w-[144px] max-h-[48px] bg-[#FF7614] rounded-[12px] z-10 order-3" >
           Tracks
-          <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3.67001 7.43994L12.5 12.5499L21.27 7.46991" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12.5 21.6099V12.5399" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22.11 12.83V9.17C22.11 7.79 21.12 6.11002 19.91 5.44002L14.57 2.48C13.43 1.84 11.57 1.84 10.43 2.48L5.09 5.44002C3.88 6.11002 2.89001 7.79 2.89001 9.17V14.83C2.89001 16.21 3.88 17.89 5.09 18.56L10.43 21.52C11 21.84 11.75 22 12.5 22C13.25 22 14 21.84 14.57 21.52" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M19.7 21.4C21.4673 21.4 22.9 19.9673 22.9 18.2C22.9 16.4327 21.4673 15 19.7 15C17.9327 15 16.5 16.4327 16.5 18.2C16.5 19.9673 17.9327 21.4 19.7 21.4Z" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M23.5 22L22.5 21" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+        <img src ="/img/track.svg">
       </button>
       </div>
     </div>
@@ -54,56 +47,19 @@
 definePageMeta({
   layout:'custom-track', 
 })
-const inputs = ref([{ value: '' }]);
-const inputRefs = ref([]);
-const code = ref('')
+
+const { handleKeydown,removeInput, inputs, inputRefs, trackNumbers } = useTracking()
+    
+    
+const router = useRouter()
+const route = useRoute()
+
+
 const isShowPlaceholder = computed(()=>{
 if(inputs.value.length >1) return false
 if(inputs.value[0].value) return false
 return true
-
 })
-const handleKeydown = (event, index) => {
-  if (event.key === 'Enter') {
-    event.preventDefault();
-    const newIndex = index + 1;
-    inputs.value.splice(newIndex, 0, { value: '' });
-    nextTick(() => {
-      inputRefs.value[newIndex].focus();
-    });
-  } else if (event.key === 'Backspace' && inputs.value[index].value === '') {
-    if (index > 0) {
-      event.preventDefault();
-      inputs.value.splice(index, 1);
-      nextTick(() => {
-        inputRefs.value[index - 1].focus();
-      });
-    }
-  }
-};
-
-const data = {
- numbers: ["LB0007212015030890", "TSF1122334455667777"]
-}
-
-const closeInput = (index) => {
-  // Chỉ cho phép xóa nếu có nhiều hơn 1 ô input
-  if (inputs.value.length > 1) {
-    inputs.value.splice(index, 1); // Xóa phần tử tại vị trí index
-
-    // Sau khi xóa, focus lại vào một input hợp lý
-    nextTick(() => {
-      const newIndex = index < inputs.value.length ? index : inputs.value.length - 1;
-      inputRefs.value[newIndex].focus();
-    });
-  }
-};
-const trackNumbers = () => {
-  const data = {
-
- numbers: inputs.value.map(input => input.value)
-}
-}
 
 </script>
 
@@ -157,5 +113,9 @@ const trackNumbers = () => {
 .h-48.overflow-y-auto {
   scrollbar-width: thin; /* 'auto' hoặc 'thin' */
   scrollbar-color: #888 #f1f1f1; /* màu thumb và màu track */
+}
+
+::placeholder {
+  color: #b3b8c2;
 }
 </style>
