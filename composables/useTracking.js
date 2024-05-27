@@ -11,6 +11,8 @@ export const useTracking = () => {
     return false
   });
 
+  const toast = useToast()
+
   const tabs = ref([
     { key: 'All', label: "All", shipments: [] },
     { key: 'Delivered', label: 'Delivered', shipments: [] },
@@ -89,6 +91,24 @@ export const useTracking = () => {
 	}
 
   const trackNumbers = (inputs) => {
+  // Kiểm tra nếu bất kỳ phần tử nào trong inputs không có giá trị
+  const allInputsFilled = inputs.every(input => input.value && input.value.trim() !== '');
+
+  if (!allInputsFilled) {
+    console.log("ok");
+    toast.add({
+      description: 'Please enter your tracking number(s).',
+      icon: 'i-octicon-desktop-download-24',
+      timeout: 4000,
+      ui: {
+        progress: {
+          background: 'bg-red',
+        },
+      },
+    });
+    return;
+  }
+
     const data = {
     numbers: inputs.reduce((acc,current)=>{
       if(current.value) acc.push(current.value.trim())
@@ -98,6 +118,7 @@ export const useTracking = () => {
   }
   router.replace({path:'/tracking',query:{...data}})
   }
+
 
   const copyDetail = async () => {
     try {
@@ -142,6 +163,7 @@ export const useTracking = () => {
     trackNumbers,
     isLoading,
     copyDetail,
-    copyLink
+    copyLink,
+
   }
 }

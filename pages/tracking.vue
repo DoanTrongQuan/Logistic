@@ -1,6 +1,6 @@
 <template>
 <GlobalLoading>
-	<div class="grid grid-cols-4 gap-4 w-11/12 mx-auto h-[700px] z-1">
+	<div class="grid grid-cols-4 gap-4 w-11/12 mx-auto h-[900px] pt-10">
 		<div class="relative box-tracking flex-col lg:col-span-1 col-span-4 max-h-96 py-5 lg:relative ">
 			<div class="box-tracking-title p-4 w-full">
 				Tracking code
@@ -17,7 +17,7 @@
 					<img class = "w-[15px] h-[15px]" src="/img/close.svg" @click="removeInput(index,inputs,inputRefs)">
 				</div>
 
-				<div class="flex w-full justify-center absolute bottom-12">
+				<div class="flex w-full  justify-center absolute bottom-12">
 					<button @click = "trackNumbers(inputs)" class="button w-9/12 text-white">Track
 						<img src="/img/track.svg">
 					</button>
@@ -27,8 +27,8 @@
 				</div>
 			 </div>
 			</div>
-			<div class="lg:col-span-3 col-span-4  track-content py-2 px-3">
-				<div class="w-full">
+			<div class="lg:col-span-3 h-[800px] col-span-4  track-content py-2 px-3">
+				<div class="w-full h-[1000px]">
 					<ul class="flex mb-0 list-none flex-wrap pt-1 pb-4 flex-row">
 						<li v-for="(tab, i) in tabs" :key="i" class="-mb-px mt-2 border-b xl:mr-0 last:mr-0 flex-auto text-center cursor-pointer">
 							<a class="text-sm font-bold text-[#17171E] px-5 py-3  rounded block leading-normal"
@@ -39,7 +39,7 @@
 						</li>
 					</ul>
 					<div class="relative max-h-full flex flex-col min-w-0 break-words w-full mb-6 rounded ">
-						<div v-for="(tab, i) in tabs" v-show="openTab === tab.key" :key="i" class = "max-h-[600px] overflow-y-auto custom-scrollbar">
+						<div v-for="(tab, i) in tabs" v-show="openTab === tab.key" :key="i" class = "max-h-[700px] overflow-y-auto custom-scrollbar">
 								<div v-if = "tab.shipments.length < 1">
 									<p class = "text-center text-[#757575]">No tracking number.</p>
 								</div>
@@ -173,7 +173,6 @@
 				</div>
 			</div>
 	</div>
-		<button @click = "check">check</button>
 </GlobalLoading>
 		<!-- <button @click="check">Check</button> -->
 </template>

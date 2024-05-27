@@ -1,8 +1,9 @@
 <template>
-  <div>
-      <div>
+  <div class = "w-full h-screen flex items-center">
+    <UNotifications />
           <slot />
-      </div>
+          
+
   </div>
   </template>
   

@@ -1,5 +1,6 @@
 <template>
 
+
   <div class = "max-w-[660px] max-h-[400px] flex flex-col mx-auto justify-center">
     <p class = "flex items-center justify-center text-[32px] leading-[48px] font-bold text-[#375DE2] font-mulish">ALL-IN-ONE PACKAGE TRACKING</p>
     <p class = "flex items-center justify-center text-[16px] leading-[24px] font-medium text-[#747592] font-mulish">Support 2100+ carriers and 190+ airlines worldwide</p>
@@ -41,7 +42,7 @@
       </div> -->
     </div>
   </div>
-
+<button @click = "check">Ccheck</button>
 </template>
 
 <script setup>
@@ -55,8 +56,24 @@ const { handleKeydown,removeInput, inputs, inputRefs, trackNumbers } = useTracki
     
 const router = useRouter()
 const route = useRoute()
+const toast = useToast()
 
 
+const check = () => {
+  toast.add({
+      id: 'update_downloaded',
+      title: 'Update downloaded.',
+      description: 'It will be installed on restart. Restart now?',
+      icon: 'i-octicon-desktop-download-24',
+      timeout: 0,
+      actions: [{
+        label: 'Restart',
+        click: () => {
+          // Hành động khi người dùng nhấn "Restart"
+        }
+      }]
+    });
+}
 const isShowPlaceholder = computed(()=>{
 if(inputs.value.length >1) return false
 if(inputs.value[0].value) return false
