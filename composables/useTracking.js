@@ -6,6 +6,10 @@ export const useTracking = () => {
   
   const inputs = ref([{ value: '' }]);
   const inputRefs = ref([]);
+  
+  const isLoading = useState('loading',()=>{
+    return false
+  });
 
   const tabs = ref([
     { key: 'All', label: "All", shipments: [] },
@@ -62,7 +66,10 @@ export const useTracking = () => {
 
   async function fetchData ({numbers=''}) {
     if(!numbers) return
-			const response  = await axios.post('https://casso-services-49d8a051217a.herokuapp.com/logistic',{numbers: numbers.split(',')})
+    try {
+      isLoading.value = true
+
+      const response  = await axios.post('https://casso-services-49d8a051217a.herokuapp.com/logistic',{numbers: numbers.split(',')})
 			
 			for(let tab of tabs.value){
         tab.shipments = [];
@@ -73,7 +80,14 @@ export const useTracking = () => {
 				}
 			}
       tabs.value[0].shipments = response.data
+    } catch (error) {
+      isLoading.value = false;
+    }finally {
+      isLoading.value = false;
+
+    }
 	}
+
   const trackNumbers = (inputs) => {
     const data = {
     numbers: inputs.reduce((acc,current)=>{
@@ -82,7 +96,38 @@ export const useTracking = () => {
       },[])
       .join(",")
   }
-  router.replace({path:'/home',query:{...data}})
+  router.replace({path:'/tracking',query:{...data}})
+  }
+
+  const copyDetail = async () => {
+    try {
+      let contentToCopy = ''
+  
+      tabs.value.forEach(tab => {
+        tab.shipments.forEach(shipment => {
+          shipment.events.slice().reverse().forEach((event, k) => {
+            const time = formatDateTime(event.time)
+            const locationContent = `${event.location} ${event.content}`
+            contentToCopy += `${time} ${locationContent}\n\n`
+          })
+        })
+      })
+  
+      await navigator.clipboard.writeText(contentToCopy.trim())
+      alert('All events copied to clipboard!')
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
+  }
+
+  const copyLink = async () => {
+    try {
+      const fullPath = window.location.origin + router.currentRoute.value.fullPath
+      await navigator.clipboard.writeText(fullPath)
+      alert('Link copied to clipboard: ' + fullPath)
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
   }
 
   return {
@@ -94,6 +139,9 @@ export const useTracking = () => {
     handleKeydown,
     removeInput,
     fetchData,
-    trackNumbers
+    trackNumbers,
+    isLoading,
+    copyDetail,
+    copyLink
   }
 }

@@ -1,5 +1,6 @@
 <template>
-	<div class="grid grid-cols-4 gap-4 w-11/12 mx-auto h-[700px] ">
+<GlobalLoading>
+	<div class="grid grid-cols-4 gap-4 w-11/12 mx-auto h-[700px] z-1">
 		<div class="relative box-tracking flex-col lg:col-span-1 col-span-4 max-h-96 py-5 lg:relative ">
 			<div class="box-tracking-title p-4 w-full">
 				Tracking code
@@ -29,7 +30,7 @@
 			<div class="lg:col-span-3 col-span-4  track-content py-2 px-3">
 				<div class="w-full">
 					<ul class="flex mb-0 list-none flex-wrap pt-1 pb-4 flex-row">
-						<li v-for="(tab, i) in tabs" :key="i" class="-mb-px mt-2 border-b xl:mr-0 last:mr-0 flex-auto text-center">
+						<li v-for="(tab, i) in tabs" :key="i" class="-mb-px mt-2 border-b xl:mr-0 last:mr-0 flex-auto text-center cursor-pointer">
 							<a class="text-sm font-bold text-[#17171E] px-5 py-3  rounded block leading-normal"
 								@click="toggleTabs(tab.key)"
 								:class="{ 'font-bold bg-gradient-to-b from-[rgba(55,93,226,0)] to-[rgba(55,93,226,0.08)]': openTab === tab.key, 'font-normal bg-white': openTab != tab.key }">
@@ -39,11 +40,11 @@
 					</ul>
 					<div class="relative max-h-full flex flex-col min-w-0 break-words w-full mb-6 rounded ">
 						<div v-for="(tab, i) in tabs" v-show="openTab === tab.key" :key="i" class = "max-h-[600px] overflow-y-auto custom-scrollbar">
-							<div v-for="(shipment, j) in tab.shipments" :key="j" class = "">
-								<div v-if = "shipment.length < 1">
-									<p>No tracking number.</p>
+								<div v-if = "tab.shipments.length < 1">
+									<p class = "text-center text-[#757575]">No tracking number.</p>
 								</div>
-								<div v-else class="grid grid-cols-8 py-3 justify-between">
+							<div v-else v-for="(shipment, j) in tab.shipments" :key="j" class = "">
+								<div class="grid grid-cols-8 py-3 justify-between">
 									<div class="col-span-2 flex">
 										<img src="/img/track-code-icon.svg">
 										<div class="flex-col ml-2">
@@ -129,11 +130,13 @@
 												<circle cx="4" cy="4" r="4" />
 											</svg>	
 											<span
-												:class="`px-5 flex items-center text-base font-medium font-mulish ${k === 0 ? 'text-[#17171E]' : 'text-[#ABB4CD]'}`">{{
-													formatDateTime(event.time) }}</span>
+												:class="`px-5 flex items-center text-base font-medium font-mulish ${k === 0 ? 'text-[#17171E]' : 'text-[#ABB4CD]'}`">
+												{{formatDateTime(event.time) }}</span>
+										
 											<span
-												:class="`px-5 flex items-center text-base font-semibold font-mulish ${k === 0 ? 'text-[#17171E]' : 'text-[#ABB4CD]'}`">{{
-													event.location }} {{ event.content }}</span>
+												:class="`px-5 flex items-center text-base font-semibold font-mulish ${k === 0 ? 'text-[#17171E]' : 'text-[#ABB4CD]'}`">
+												{{event.location }} {{ event.content }}</span>
+													
 										</div>
 									</div>
 									<div class="py-4">
@@ -141,11 +144,13 @@
 											<div
 												class="grid 2xl:grid-cols-6 sm:grid-cols-3 lg:gap-3 gap-2  xl:col-span-3 lg:col-span-4 col-span-6">
 												<button
+													@click = "copyLink"
 													class="sm:col-span-1 2xl:col-span-2 bg-[#FF7614] mt-3 rounded-[12px] flex text-white flex-row justify-center items-center px-[14px] py-[10px] gap-[8px] ">Copy
 													Link
 														<img src = "/img/copy-link.svg">
 												</button>
 												<button
+													@click = "copyDetail"
 													class="sm:col-span-1 2xl:col-span-2 bg-[#E9F3FF] mt-3 border border-[#D3D8E5] rounded-[12px] flex flex-row justify-center items-center px-[14px] py-[10px] gap-[8px] box-border">Copy
 													Detail
 													<img src= "/img/copy-detail.svg">
@@ -166,10 +171,10 @@
 						</div>
 					</div>
 				</div>
-
 			</div>
-		</div>
-
+	</div>
+		<button @click = "check">check</button>
+</GlobalLoading>
 		<!-- <button @click="check">Check</button> -->
 </template>
 
@@ -184,7 +189,10 @@ const {
 	openTab, 
 	handleKeydown, 
 	removeInput,
-	trackNumbers } = useTracking();
+	copyDetail,
+	trackNumbers,
+	copyLink 
+} = useTracking();
     
 	const inputs = ref([{ value: '' }]);
 	const inputRefs = ref([]);
@@ -220,9 +228,11 @@ watch(() => inputs.value, (newInputs) => {
 
 });
 
-const check = () => {
-	console.log(tabs.value[2].shipments.events.slice().reverse())
-}
+
+
+
+
+
 
 </script>
 
@@ -231,7 +241,7 @@ const check = () => {
 
 	box-sizing: border-box;
 	background: #FFFFFF;
-	/* border: 0.5px solid #E5E5E5; */
+	border: 0.5px solid #E5E5E5;
 	border-radius: 32px;
 }
 
@@ -276,7 +286,7 @@ const check = () => {
 
 
 .track-content {
-	/* border: 0.5px solid #E5E5E5; */
+  border: 0.5px solid #E5E5E5; 
 	border-radius: 29px;
 }
 
